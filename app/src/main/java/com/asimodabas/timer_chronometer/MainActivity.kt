@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.view.View
 import com.asimodabas.timer_chronometer.databinding.ActivityMainBinding
 
@@ -11,45 +12,44 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    var number = 0
-    var runnable: Runnable = Runnable { }
-    var handler: Handler = Handler(Looper.getMainLooper())
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.button.setOnClickListener {
+        var zamaniDurdur: Long = 0
 
-            start()
-        }
-        binding.button2.setOnClickListener {
+        binding.btnStart.setOnClickListener {
 
-            stop()
-        }
-    }
-
-    fun start() {
-
-        number = 0
-        runnable = object : Runnable {
-            override fun run() {
-                number = number + 1
-                binding.textView.text = "Time: $number"
-                handler.postDelayed(this, 1000)
-            }
+            binding.chronometer.base = SystemClock.elapsedRealtime() + zamaniDurdur
+            binding.chronometer.start()
+            binding.btnStart.visibility = View.GONE
+            binding.btnPause.visibility = View.VISIBLE
+            binding.imageView.setImageDrawable(getDrawable(R.drawable.pause))
 
         }
-        handler.post(runnable)
 
-    }
+        binding.btnPause.setOnClickListener {
 
-    fun stop() {
+            zamaniDurdur = binding.chronometer.base - SystemClock.elapsedRealtime()
+            binding.chronometer.stop()
+            binding.btnPause.visibility = View.GONE
+            binding.btnStart.visibility = View.VISIBLE
+            binding.imageView.setImageDrawable(getDrawable(R.drawable.start))
 
-        handler.removeCallbacks(runnable)
-        number = 0
-        binding.textView.text = "Time: 0"
+        }
+
+        binding.btnReset.setOnClickListener {
+
+            binding.chronometer.base = SystemClock.elapsedRealtime()
+            binding.chronometer.stop()
+            zamaniDurdur = 0
+            binding.btnPause.visibility = View.GONE
+            binding.btnStart.visibility = View.VISIBLE
+            binding.imageView.setImageDrawable(getDrawable(R.drawable.start))
+
+        }
+
     }
 
 
