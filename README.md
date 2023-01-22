@@ -1,4 +1,4 @@
-# Timer-Chronometer
+# Basic-Chronometer
 
 App Images
 --------------
